@@ -4,31 +4,21 @@ function main() {
 
   // Fungsi untuk mendapatkan daftar buku
   const getBook = () => {
-    // membuat instance dari XMLHttpRequest
-    const xhr = new XMLHttpRequest();
-
-    // menetapkan callback jika response sukses dan error
-    xhr.onload = function () {
-      const responseJson = JSON.parse(this.responseText);
-
-      if (responseJson.error) {
-        showResponseMessage(responseJson.message);
-      } else {
-        renderAllBooks(responseJson.books);
-      }
-    };
-
-    xhr.onerror = function () {
-      showResponseMessage();
-    };
-
-    // Membuat GET request dan menetapkan target URL
-    xhr.open("GET", "https://books-api.dicoding.dev/list");
-
-    // Mengirimkan request
-    xhr.send();
+    fetch(`${baseUrl}/list`)
+      .then((response) => {
+        return response.json();
+      })
+      .then((responseJson) => {
+        if (responseJson.error) {
+          showResponseMessage(responseJson.message);
+        } else {
+          renderAllBooks(responseJson.books);
+        }
+      })
+      .catch((error) => {
+        showResponseMessage(error.message);
+      });
   };
-
 
   // Fungsi untuk menambahkan buku baru
   const insertBook = (book) => {
@@ -57,7 +47,6 @@ function main() {
     xhr.send(JSON.stringify(book));
   };
 
-
   // Fungsi untuk memperbarui buku yang sudah ada
   const updateBook = (book) => {
     // Membuat instance dari XMLHttpRequest
@@ -84,7 +73,6 @@ function main() {
     // Mengirimkan request dan menyisipkan JSON.stringify(book) pada body
     xhr.send(JSON.stringify(book));
   };
-
 
   // Fungsi untuk menghapus buku
   const removeBook = (bookId) => {
